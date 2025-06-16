@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom base styles */
+@layer base {
+  body {
+    @apply overflow-x-hidden;
+    font-family: var(--font-geist-sans), 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+  }
+}
+
+/* Custom components */
+@layer components {
+  .glass-card {
+    @apply bg-white/95 backdrop-blur-xl border border-white/30 shadow-2xl;
+    backdrop-filter: blur(20px);
+  }
+  
+  .btn-primary {
+    @apply py-4 px-8 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl font-semibold shadow-lg hover:from-blue-600 hover:to-blue-700 hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none;
+  }
+  
+  .btn-success {
+    @apply py-4 px-8 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-2xl font-semibold shadow-lg hover:from-green-600 hover:to-green-700 hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 transition-all duration-300 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none;
+  }
+  
+  .btn-danger {
+    @apply py-4 px-8 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-semibold shadow-lg hover:from-red-600 hover:to-red-700 hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 transition-all duration-300;
+  }
+  
+  .input-field {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200;
+  }
+  
+  .status-base {
+    @apply p-6 rounded-2xl text-base font-medium text-center border-l-4 animate-slide-up shadow-lg backdrop-blur-sm;
+  }
+  
+  .status-info {
+    @apply status-base bg-blue-50/90 text-blue-700 border-blue-400;
+  }
+  
+  .status-success {
+    @apply status-base bg-green-50/90 text-green-700 border-green-400;
+  }
+  
+  .status-error {
+    @apply status-base bg-red-50/90 text-red-700 border-red-400;
+  }
+  
+  .status-loading {
+    @apply status-base bg-yellow-50/90 text-yellow-700 border-yellow-400;
+  }
+}
+
+/* Loading spinner */
+.loading-spinner {
+  @apply inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin;
+}
+
+/* Face detection canvas styling */
+.face-canvas {
+  border: 3px solid #10b981;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100/50 rounded-full;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300/70 rounded-full hover:bg-gray-400/70;
+}
+
+/* Responsive improvements */
+@media (max-width: 640px) {
+  .glass-card {
+    @apply mx-2;
+  }
+}
