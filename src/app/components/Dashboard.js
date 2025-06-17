@@ -257,12 +257,11 @@ const Dashboard = ({ user, onLogout }) => {
                   <Grid item xs={12} sm={6}>
                     <Button
                       fullWidth
-                      variant="outlined"
-                      startIcon={<Settings size={20} />}
+                      variant="contained"
                       sx={{
                         py: 1.5,
                         borderColor: '#e5e7eb',
-                        color: '#374151',
+                        color: '#fff',
                         '&:hover': {
                           borderColor: '#667eea',
                           backgroundColor: 'rgba(102, 126, 234, 0.05)'
@@ -275,12 +274,11 @@ const Dashboard = ({ user, onLogout }) => {
                   <Grid item xs={12} sm={6}>
                     <Button
                       fullWidth
-                      variant="outlined"
-                      startIcon={<Activity size={20} />}
+                      variant="contained"
                       sx={{
                         py: 1.5,
                         borderColor: '#e5e7eb',
-                        color: '#374151',
+                        color: '#fff',
                         '&:hover': {
                           borderColor: '#667eea',
                           backgroundColor: 'rgba(102, 126, 234, 0.05)'
