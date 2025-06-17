@@ -32,37 +32,44 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
       return
     }
 
-    // Check if mediaDevices is available
-    if (!navigator.mediaDevices) {
-      // For older browsers that might not have mediaDevices directly on navigator
-      navigator.mediaDevices = {}
+    // Check browser compatibility
+    const isSecureContext = window.isSecureContext
+    if (!isSecureContext) {
+      setStatus({
+        message: '❌ Camera access requires a secure context (HTTPS). Please use HTTPS or localhost.',
+        type: 'error'
+      })
+      return
     }
 
-    // Some browsers partially implement mediaDevices. We can't just assign an object
-    // with getUserMedia as it would overwrite existing properties.
-    if (!navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia = function(constraints) {
-        // First get ahold of the legacy getUserMedia, if present
-        const getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia
-
-        // Some browsers just don't implement it - return a rejected promise with an error
-        if (!getUserMedia) {
-          return Promise.reject(new Error('getUserMedia is not implemented in this browser'))
-        }
-
-        // Otherwise, wrap the call to the old navigator.getUserMedia with a Promise
-        return new Promise(function(resolve, reject) {
-          getUserMedia.call(navigator, constraints, resolve, reject)
-        })
-      }
+    // Check if we're on a supported browser
+    const isSupportedBrowser = /Chrome|Firefox|Safari|Edge/i.test(navigator.userAgent)
+    if (!isSupportedBrowser) {
+      setStatus({
+        message: '❌ Your browser is not supported. Please use Chrome, Firefox, Safari, or Edge.',
+        type: 'error'
+      })
+      return
     }
 
+    // Check if we're on a mobile device
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+    
     try {
       setStatus({ message: '📹 Initializing camera...', type: 'loading' })
+
+      // Try to get available devices first
+      const devices = await navigator.mediaDevices.enumerateDevices()
+      const videoDevices = devices.filter(device => device.kind === 'videoinput')
       
-      // Check if we're on a mobile device
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-      
+      if (videoDevices.length === 0) {
+        setStatus({
+          message: '❌ No camera found. Please ensure you have a camera connected.',
+          type: 'error'
+        })
+        return
+      }
+
       const constraints = {
         video: {
           width: { ideal: isMobile ? 640 : 1280 },
@@ -93,6 +100,12 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
         errorMessage = '❌ Camera constraints could not be satisfied. Please try again.'
       } else if (error.name === 'TypeError') {
         errorMessage = '❌ Camera access is not supported in this browser. Please try using Chrome, Firefox, or Safari.'
+      } else if (error.name === 'NotSupportedError') {
+        errorMessage = '❌ Your browser does not support camera access. Please try using Chrome, Firefox, or Safari.'
+      } else if (error.name === 'AbortError') {
+        errorMessage = '❌ Camera access was aborted. Please try again.'
+      } else if (error.name === 'SecurityError') {
+        errorMessage = '❌ Camera access requires a secure context (HTTPS). Please use HTTPS or localhost.'
       }
       
       setStatus({ message: errorMessage, type: 'error' })
