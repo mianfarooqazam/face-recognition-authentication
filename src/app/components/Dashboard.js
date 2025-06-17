@@ -1,11 +1,11 @@
 import { useRef, useEffect, useState } from 'react'
-import { Container, Paper, Typography, Button, Box, Stack,  Chip, Grid, Divider, Fade } from '@mui/material'
+import { Container, Paper, Typography, Button, Box, Stack, Chip, Grid, Divider, Fade, Avatar } from '@mui/material'
 import { LogOut, Mail, Calendar, Clock, Shield, Activity, Settings, BarChart } from 'lucide-react'
 import { updateUser } from '../utils/userStorage'
 
 const Dashboard = ({ user, onLogout }) => {
-  const avatarCanvasRef = useRef(null)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [profileImage, setProfileImage] = useState(null)
   const [userStats] = useState({
     totalLogins: Math.floor(Math.random() * 50) + 1,
     memberSince: user.registrationDate,
@@ -15,28 +15,12 @@ const Dashboard = ({ user, onLogout }) => {
   useEffect(() => {
     setIsLoaded(true)
     
-    if (avatarCanvasRef.current) {
-      const canvas = avatarCanvasRef.current
-      const ctx = canvas.getContext('2d')
-      
-      const gradient = ctx.createLinearGradient(0, 0, 150, 150)
-      gradient.addColorStop(0, '#3b82f6')
-      gradient.addColorStop(0.5, '#8b5cf6')
-      gradient.addColorStop(1, '#6366f1')
-      
-      ctx.fillStyle = gradient
-      ctx.fillRect(0, 0, 150, 150)
-      
-      ctx.fillStyle = 'white'
-      ctx.font = 'bold 48px Arial'
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-      
-      const initials = user.username.length >= 2 
-        ? user.username.slice(0, 2).toUpperCase()
-        : user.username.charAt(0).toUpperCase()
-      
-      ctx.fillText(initials, 75, 75)
+    // Get the captured face image from sessionStorage
+    const capturedImage = sessionStorage.getItem('capturedFaceImage')
+    if (capturedImage) {
+      setProfileImage(capturedImage)
+      // Clear it from session storage after using it
+      sessionStorage.removeItem('capturedFaceImage')
     }
     
     const updatedUser = {
@@ -70,6 +54,28 @@ const Dashboard = ({ user, onLogout }) => {
     })
   }
 
+  // Fallback avatar generator
+  const generateFallbackAvatar = () => {
+    const initials = user.username.length >= 2 
+      ? user.username.slice(0, 2).toUpperCase()
+      : user.username.charAt(0).toUpperCase()
+    
+    return (
+      <Avatar
+        sx={{
+          width: 150,
+          height: 150,
+          fontSize: '3rem',
+          fontWeight: 'bold',
+          background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #6366f1 100%)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+        }}
+      >
+        {initials}
+      </Avatar>
+    )
+  }
+
   return (
     <Fade in={isLoaded} timeout={600}>
       <Container maxWidth="md" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', py: 2 }}>
@@ -89,7 +95,7 @@ const Dashboard = ({ user, onLogout }) => {
                 textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)'
               }}
             >
-              Welcome !
+              Welcome {user.username}!
             </Typography>
             <Typography 
               variant="h6"
@@ -114,17 +120,26 @@ const Dashboard = ({ user, onLogout }) => {
               {/* User Profile Section */}
               <Box sx={{ mb: 4 }}>
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} alignItems="center">
-                  {/* Avatar */}
+                  {/* Profile Image/Avatar */}
                   <Box sx={{ position: 'relative' }}>
-                    <canvas
-                      ref={avatarCanvasRef}
-                      width="150"
-                      height="150"
-                      style={{
-                        borderRadius: '50%',
-                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-                      }}
-                    />
+                    {profileImage ? (
+                      <Box
+                        component="img"
+                        src={profileImage}
+                        alt="Profile"
+                        sx={{
+                          width: 150,
+                          height: 150,
+                          borderRadius: '50%',
+                          objectFit: 'cover',
+                          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                          border: '3px solid rgba(255, 255, 255, 0.8)'
+                        }}
+                      />
+                    ) : (
+                      generateFallbackAvatar()
+                    )}
+                    
                     <Chip
                       icon={<Shield size={16} />}
                       label="Verified"
@@ -258,14 +273,10 @@ const Dashboard = ({ user, onLogout }) => {
                     <Button
                       fullWidth
                       variant="contained"
+                      startIcon={<Settings size={20} />}
                       sx={{
                         py: 1.5,
-                        borderColor: '#e5e7eb',
                         color: '#fff',
-                        '&:hover': {
-                          borderColor: '#667eea',
-                          backgroundColor: 'rgba(102, 126, 234, 0.05)'
-                        }
                       }}
                     >
                       Account Settings
@@ -275,14 +286,10 @@ const Dashboard = ({ user, onLogout }) => {
                     <Button
                       fullWidth
                       variant="contained"
+                      startIcon={<Activity size={20} />}
                       sx={{
                         py: 1.5,
-                        borderColor: '#e5e7eb',
                         color: '#fff',
-                        '&:hover': {
-                          borderColor: '#667eea',
-                          backgroundColor: 'rgba(102, 126, 234, 0.05)'
-                        }
                       }}
                     >
                       Security Logs

@@ -124,6 +124,27 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
     setIsCameraActive(false)
   }
 
+  const captureFaceImage = () => {
+    // Create a canvas to capture the current video frame
+    const canvas = document.createElement('canvas')
+    const video = videoRef.current
+    
+    if (!video || video.videoWidth === 0 || video.videoHeight === 0) {
+      return null
+    }
+
+    // Set canvas dimensions to match video
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    
+    // Draw the current video frame to canvas
+    const ctx = canvas.getContext('2d')
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+    
+    // Convert to base64 image data
+    return canvas.toDataURL('image/jpeg', 0.8)
+  }
+
   const captureFace = async () => {
     try {
       setStatus({ message: '🔍 Analyzing your face...', type: 'loading' })
@@ -133,6 +154,12 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
       if (!result.success) {
         setStatus({ message: result.message, type: 'error' })
         return
+      }
+
+      // Capture the current video frame as an image
+      const capturedImage = captureFaceImage()
+      if (capturedImage) {
+        sessionStorage.setItem('capturedFaceImage', capturedImage)
       }
 
       const faceDescriptor = result.descriptor
@@ -228,7 +255,7 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
             fontWeight="medium"
             sx={{ textAlign: 'center' }}
           >
-            Redirecting to Dashboard...
+            {sessionStorage.getItem('pendingFaceDescriptor') ? 'Redirecting to Registration...' : 'Redirecting to Dashboard...'}
           </Typography>
           <Typography 
             variant="body1" 
