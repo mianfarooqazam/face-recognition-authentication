@@ -29,9 +29,9 @@ bun dev
 ```
 Than install ngrok 
 ```bash
-npm install -g ngrok
+npm install -g ngrok 
 # than start it with
-ngrok http 3000 (along with npm run dev)
+ngrok http 3000 (along with npm run dev in another terminal)
 ```
 ## Why ngrok
 
