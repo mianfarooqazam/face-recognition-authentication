@@ -27,6 +27,16 @@ pnpm dev
 # or
 bun dev
 ```
+Than install ngrok 
+```bash
+npm install -g ngrok
+# than start it with
+ngrok http 3000 (along with npm run dev)
+```
+## Why ngrok
+
+Ngrok is a cross-platform application that creates secure tunnels (paths) to localhost machine. It enables developers to expose a local development server to the Internet with minimal effort. The software makes your locally-hosted web server (like computer, laptop, rasbery PI) appear to be hosted on a subdomain of ngrok.com, meaning that no public IP or domain name on the local machine is needed.
+
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
