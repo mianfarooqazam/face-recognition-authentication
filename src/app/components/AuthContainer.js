@@ -66,7 +66,7 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
       }
 
       const faceDescriptor = result.descriptor
-      const existingUser = findMatchingUser(faceDescriptor)
+      const existingUser = await findMatchingUser(faceDescriptor)
 
       if (existingUser) {
         existingUser.lastLogin = new Date().toISOString()

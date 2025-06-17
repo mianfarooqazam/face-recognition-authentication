@@ -1,17 +1,29 @@
-import * as faceapi from '@vladmandic/face-api'
+let faceapi = null
 
 export const loadFaceApiModels = async () => {
-  const modelPath = 'https://vladmandic.github.io/face-api/model/'
+  if (typeof window === 'undefined') return false
   
-  await Promise.all([
-    faceapi.nets.ssdMobilenetv1.loadFromUri(modelPath),
-    faceapi.nets.faceLandmark68Net.loadFromUri(modelPath),
-    faceapi.nets.faceRecognitionNet.loadFromUri(modelPath)
-  ])
+  try {
+    faceapi = await import('@vladmandic/face-api')
+    const modelPath = 'https://vladmandic.github.io/face-api/model/'
+    
+    await Promise.all([
+      faceapi.nets.ssdMobilenetv1.loadFromUri(modelPath),
+      faceapi.nets.faceLandmark68Net.loadFromUri(modelPath),
+      faceapi.nets.faceRecognitionNet.loadFromUri(modelPath)
+    ])
+    return true
+  } catch (error) {
+    console.error('Error loading face-api models:', error)
+    return false
+  }
 }
 
 export const detectFaceInVideo = async (video, canvas) => {
-  if (!video || video.videoWidth === 0) return
+  if (typeof window === 'undefined' || !video || video.videoWidth === 0) return
+  if (!faceapi) {
+    faceapi = await import('@vladmandic/face-api')
+  }
 
   try {
     const detections = await faceapi
@@ -88,6 +100,17 @@ export const detectFaceInVideo = async (video, canvas) => {
 }
 
 export const captureFaceDescriptor = async (video) => {
+  if (typeof window === 'undefined') {
+    return {
+      success: false,
+      message: 'Face detection is only available in the browser.'
+    }
+  }
+  
+  if (!faceapi) {
+    faceapi = await import('@vladmandic/face-api')
+  }
+
   try {
     const detections = await faceapi
       .detectAllFaces(video)

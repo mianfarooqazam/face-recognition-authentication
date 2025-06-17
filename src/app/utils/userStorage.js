@@ -1,5 +1,4 @@
-import * as faceapi from '@vladmandic/face-api'
-
+// Add back the STORAGE_KEY constant
 const STORAGE_KEY = 'registeredUsers'
 
 export const getRegisteredUsers = () => {
@@ -47,9 +46,14 @@ export const updateUser = (updatedUser) => {
   }
 }
 
-export const findMatchingUser = (faceDescriptor) => {
+export const findMatchingUser = async (faceDescriptor) => {
   const users = getRegisteredUsers()
   const threshold = 0.6 // Adjust this value to make matching more/less strict
+
+  // Dynamically import face-api only on client side
+  if (typeof window === 'undefined') return null
+  
+  const faceapi = await import('@vladmandic/face-api')
 
   for (const user of users) {
     try {
