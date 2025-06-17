@@ -15,6 +15,7 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
   const [isCameraActive, setIsCameraActive] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const [isRedirecting, setIsRedirecting] = useState(false)
+  const [redirectMessage, setRedirectMessage] = useState('Redirecting...')
   const videoRef = useRef(null)
   const canvasRef = useRef(null)
   const streamRef = useRef(null)
@@ -158,7 +159,7 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
 
       // Capture the current video frame as an image
       const capturedImage = captureFaceImage()
-      if (capturedImage) {
+      if (capturedImage && typeof window !== 'undefined') {
         sessionStorage.setItem('capturedFaceImage', capturedImage)
       }
 
@@ -168,6 +169,7 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
       if (existingUser) {
         existingUser.lastLogin = new Date().toISOString()
         setStatus({ message: `🎉 Welcome back, ${existingUser.username}!`, type: 'success' })
+        setRedirectMessage('Redirecting to Dashboard...')
         
         // Stop camera before logging in
         stopCamera()
@@ -181,9 +183,12 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
         }, 2000)
       } else {
         // Store face descriptor temporarily
-        sessionStorage.setItem('pendingFaceDescriptor', JSON.stringify(Array.from(faceDescriptor)))
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('pendingFaceDescriptor', JSON.stringify(Array.from(faceDescriptor)))
+        }
         
         setStatus({ message: '👋 New face detected! Redirecting to registration...', type: 'success' })
+        setRedirectMessage('Redirecting to Registration...')
         
         // Stop camera and redirect to registration
         setTimeout(() => {
@@ -255,7 +260,7 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
             fontWeight="medium"
             sx={{ textAlign: 'center' }}
           >
-            {sessionStorage.getItem('pendingFaceDescriptor') ? 'Redirecting to Registration...' : 'Redirecting to Dashboard...'}
+            {redirectMessage}
           </Typography>
           <Typography 
             variant="body1" 
