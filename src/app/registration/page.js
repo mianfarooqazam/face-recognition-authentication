@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Box, Container, Paper, Typography, Button, Stack, Fade } from '@mui/material'
-import { ArrowLeft, UserCheck, Camera, Sparkles } from 'lucide-react'
+import { Box, Container, Paper, Typography, Button, Fade } from '@mui/material'
+import { ArrowLeft, UserCheck, Sparkles } from 'lucide-react'
 import RegistrationForm from '../components/RegistrationForm'
 import { saveUser } from '../utils/userStorage'
 
@@ -21,7 +21,7 @@ export default function RegistrationPage() {
       router.push('/')
       return
     }
-    
+
     try {
       const descriptor = JSON.parse(descriptorData)
       setFaceDescriptor(descriptor)
@@ -48,13 +48,13 @@ export default function RegistrationPage() {
     }
 
     saveUser(newUser)
-    
+
     // Clear the temporary face data
     sessionStorage.removeItem('pendingFaceDescriptor')
-    
+
     // Store user data for auto-login
     sessionStorage.setItem('registeredUser', JSON.stringify(newUser))
-    
+
     // Redirect back to home with success message
     router.push('/?registration=success')
   }
@@ -65,8 +65,8 @@ export default function RegistrationPage() {
   }
 
   return (
-    <Box 
-      sx={{ 
+    <Box
+      sx={{
         minHeight: '100vh',
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         display: 'flex',
@@ -86,15 +86,15 @@ export default function RegistrationPage() {
             }}
           >
             {/* Icon and Header */}
-            <Box 
-              sx={{ 
+            <Box
+              sx={{
                 textAlign: 'center',
                 color: 'white',
                 mb: 2
               }}
             >
-              <Box 
-                sx={{ 
+              <Box
+                sx={{
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -109,11 +109,11 @@ export default function RegistrationPage() {
               >
                 <UserCheck size={30} color="white" />
               </Box>
-              
-              <Typography 
-                variant="h3" 
-                component="h1" 
-                fontWeight="bold" 
+
+              <Typography
+                variant="h3"
+                component="h1"
+                fontWeight="bold"
                 gutterBottom
                 sx={{
                   textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)'
@@ -121,12 +121,12 @@ export default function RegistrationPage() {
               >
                 Almost There!
               </Typography>
-              
-              <Box 
-                sx={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
+
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   gap: 1,
                   opacity: 0.9
                 }}
@@ -140,9 +140,9 @@ export default function RegistrationPage() {
             </Box>
 
             {/* Main Form Paper */}
-            <Paper 
-              elevation={24} 
-              sx={{ 
+            <Paper
+              elevation={24}
+              sx={{
                 width: '100%',
                 borderRadius: 3,
                 overflow: 'hidden',
@@ -159,20 +159,12 @@ export default function RegistrationPage() {
             {/* Cancel Button */}
             <Button
               fullWidth
-              variant="outlined"
+              variant="contained"
               size="large"
               onClick={handleCancel}
               startIcon={<ArrowLeft size={20} />}
-              sx={{ 
-                borderColor: 'rgba(255, 255, 255, 0.5)',
-                color: 'white',
-                backdropFilter: 'blur(10px)',
-                background: 'rgba(255, 255, 255, 0.1)',
-                '&:hover': {
-                  borderColor: 'white',
-                  background: 'rgba(255, 255, 255, 0.2)',
-                },
-                maxWidth: 'sm'
+              sx={{
+                maxWidth: 'sm', bgcolor:"#1565C0"
               }}
             >
               Back to Login

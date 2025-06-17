@@ -4,10 +4,10 @@ import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Container, Paper, Typography, Button, Stack, Fade, Box } from '@mui/material'
 import { Camera, Scan, Shield, Loader2 } from 'lucide-react'
-import CameraView from './CameraView'
-import StatusDisplay from './StatusDisplay'
-import { detectFaceInVideo, captureFaceDescriptor } from '../utils/faceApi'
-import { findMatchingUser } from '../utils/userStorage'
+import CameraView from '@/app/components/CameraView'
+import StatusDisplay from '@/app/components/StatusDisplay'
+import { detectFaceInVideo, captureFaceDescriptor } from '@/app/utils/faceApi'
+import { findMatchingUser } from '@/app/utils/userStorage'
 
 const AuthContainer = ({ onLogin, isModelsLoaded }) => {
   const router = useRouter()
@@ -224,14 +224,12 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
               }}
             >
-              <Shield size={40} color="white" />
+              <Shield size={30} color="white" />
             </Box>
             
             <Typography 
-              variant="h3" 
-              component="h1" 
+              variant="h4" 
               fontWeight="bold" 
-              gutterBottom
               sx={{
                 textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)'
               }}
@@ -241,7 +239,7 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
             
             <Typography 
               variant="h6"
-              sx={{ opacity: 0.9 }}
+              sx={{ opacity: 0.6 }}
             >
               Secure authentication powered by AI
             </Typography>

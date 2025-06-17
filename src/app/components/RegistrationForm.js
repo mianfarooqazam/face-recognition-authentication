@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { 
-  TextField, 
-  Button, 
-  Box, 
-  Paper, 
-  Typography, 
+import {
+  TextField,
+  Button,
+  Box,
+  Paper,
+  Typography,
   Alert,
   CircularProgress,
   Container,
@@ -27,7 +27,7 @@ const RegistrationForm = ({ onSubmit }) => {
       ...formData,
       [name]: value
     })
-    
+
     if (errors[name]) {
       setErrors({
         ...errors,
@@ -70,7 +70,7 @@ const RegistrationForm = ({ onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     const validationErrors = validateForm()
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors)
@@ -78,7 +78,7 @@ const RegistrationForm = ({ onSubmit }) => {
     }
 
     setIsSubmitting(true)
-    
+
     try {
       await onSubmit({
         username: formData.username.trim(),
@@ -94,94 +94,76 @@ const RegistrationForm = ({ onSubmit }) => {
 
   return (
     <Container maxWidth="sm">
-      <Paper elevation={3} sx={{ p: 4, mt: 4 }}>
-        <Box textAlign="center" mb={3}>
-          <Typography variant="h5" component="h2" fontWeight="bold" gutterBottom>
-            Complete Your Profile
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Just a few details to get you started
-          </Typography>
-        </Box>
-        
-        <Box component="form" onSubmit={handleSubmit} noValidate>
-          <TextField
-            fullWidth
-            id="username"
-            name="username"
-            label="Choose a Username"
-            variant="outlined"
-            margin="normal"
-            value={formData.username}
-            onChange={handleInputChange}
-            error={!!errors.username}
-            helperText={errors.username}
-            disabled={isSubmitting}
-            required
-            placeholder="Enter your username"
-            autoFocus
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <User size={20} />
-                </InputAdornment>
-              ),
-            }}
-          />
 
-          <TextField
-            fullWidth
-            id="email"
-            name="email"
-            label="Email Address"
-            type="email"
-            variant="outlined"
-            margin="normal"
-            value={formData.email}
-            onChange={handleInputChange}
-            error={!!errors.email}
-            helperText={errors.email}
-            disabled={isSubmitting}
-            required
-            placeholder="Enter your email"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Mail size={20} />
-                </InputAdornment>
-              ),
-            }}
-          />
+      <Box textAlign="center" mb={3}>
+        <Typography variant="h5" component="h2" fontWeight="bold" >
+          Complete Your Profile
+        </Typography>
+       
+      </Box>
 
-          {errors.submit && (
-            <Alert 
-              severity="error" 
-              sx={{ mt: 2 }}
-              icon={<AlertCircle size={20} />}
-            >
-              {errors.submit}
-            </Alert>
-          )}
+      <Box component="form" onSubmit={handleSubmit} noValidate>
+        <TextField
+          fullWidth
+          id="username"
+          name="username"
+          label="Username"
+          variant="outlined"
+          margin="normal"
+          value={formData.username}
+          onChange={handleInputChange}
+          error={!!errors.username}
+          helperText={errors.username}
+          disabled={isSubmitting}
+          required
+          placeholder="Enter your username"
+          autoFocus
+        />
 
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            size="large"
-            disabled={isSubmitting}
-            startIcon={isSubmitting ? <CircularProgress size={20} color="inherit" /> : <CheckCircle size={20} />}
-            sx={{ 
-              mt: 3, 
-              mb: 2,
-              py: 1.5,
-              fontSize: '1rem',
-              fontWeight: 'medium'
-            }}
+        <TextField
+          fullWidth
+          id="email"
+          name="email"
+          label="Email Address"
+          type="email"
+          variant="outlined"
+          margin="normal"
+          value={formData.email}
+          onChange={handleInputChange}
+          error={!!errors.email}
+          helperText={errors.email}
+          disabled={isSubmitting}
+          required
+        />
+
+        {errors.submit && (
+          <Alert
+            severity="error"
+            sx={{ mt: 2 }}
+            icon={<AlertCircle size={20} />}
           >
-            {isSubmitting ? 'Creating your account...' : 'Complete Registration'}
-          </Button>
-        </Box>
-      </Paper>
+            {errors.submit}
+          </Alert>
+        )}
+
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          size="large"
+          disabled={isSubmitting}
+          startIcon={isSubmitting ? <CircularProgress size={20} color="inherit" /> : <CheckCircle size={20} />}
+          sx={{
+            mt: 3,
+            mb: 2,
+            py: 1.5,
+            fontSize: '1rem',
+            fontWeight: 'medium'
+          }}
+        >
+          {isSubmitting ? 'Creating your account...' : 'Submit'}
+        </Button>
+      </Box>
     </Container>
   )
 }

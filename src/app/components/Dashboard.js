@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
-import { Container, Paper, Typography, Button, Box, Stack, Avatar, Chip, Grid, Divider, Fade } from '@mui/material'
-import { LogOut, User, Mail, Calendar, Clock, Shield, Activity, Settings, BarChart } from 'lucide-react'
+import { Container, Paper, Typography, Button, Box, Stack,  Chip, Grid, Divider, Fade } from '@mui/material'
+import { LogOut, Mail, Calendar, Clock, Shield, Activity, Settings, BarChart } from 'lucide-react'
 import { updateUser } from '../utils/userStorage'
 
 const Dashboard = ({ user, onLogout }) => {
@@ -83,15 +83,13 @@ const Dashboard = ({ user, onLogout }) => {
             }}
           >
             <Typography 
-              variant="h3" 
-              component="h1" 
+              variant="h4" 
               fontWeight="bold" 
-              gutterBottom
               sx={{
                 textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)'
               }}
             >
-              Welcome Back!
+              Welcome !
             </Typography>
             <Typography 
               variant="h6"
