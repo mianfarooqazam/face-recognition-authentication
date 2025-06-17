@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Container, Paper, Typography, Button, Stack, Fade, Box } from '@mui/material'
+import { Container, Paper, Typography, Button, Stack, Fade, Box, Backdrop, CircularProgress } from '@mui/material'
 import { Camera, Scan, Shield, Loader2 } from 'lucide-react'
 import CameraView from '@/app/components/CameraView'
 import StatusDisplay from '@/app/components/StatusDisplay'
@@ -14,6 +14,7 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
   const [status, setStatus] = useState({ message: 'Loading face detection models...', type: 'loading' })
   const [isCameraActive, setIsCameraActive] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [isRedirecting, setIsRedirecting] = useState(false)
   const videoRef = useRef(null)
   const canvasRef = useRef(null)
   const streamRef = useRef(null)
@@ -144,8 +145,12 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
         // Stop camera before logging in
         stopCamera()
         
+        // Show loader and redirect to dashboard
         setTimeout(() => {
-          onLogin(existingUser)
+          setIsRedirecting(true)
+          setTimeout(() => {
+            onLogin(existingUser)
+          }, 1000)
         }, 2000)
       } else {
         // Store face descriptor temporarily
@@ -156,7 +161,10 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
         // Stop camera and redirect to registration
         setTimeout(() => {
           stopCamera()
-          router.push('/registration')
+          setIsRedirecting(true)
+          setTimeout(() => {
+            router.push('/registration')
+          }, 1000)
         }, 1500)
       }
     } catch (error) {
@@ -191,142 +199,183 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
   }, [])
 
   return (
-    <Fade in={isLoaded} timeout={600}>
-      <Container maxWidth="sm" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', py: 2 }}>
+    <>
+      {/* Loading Backdrop */}
+      <Backdrop
+        sx={{
+          color: '#fff',
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          backgroundColor: 'rgba(102, 126, 234, 0.8)',
+          backdropFilter: 'blur(10px)'
+        }}
+        open={isRedirecting}
+      >
         <Box
           sx={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: 3,
-            width: '100%'
+            gap: 3
           }}
         >
-          {/* Header */}
-          <Box 
-            sx={{ 
-              textAlign: 'center',
-              color: 'white',
-              mb: 2
+          <CircularProgress 
+            size={60} 
+            thickness={4}
+            sx={{ color: 'white' }}
+          />
+          <Typography 
+            variant="h5" 
+            fontWeight="medium"
+            sx={{ textAlign: 'center' }}
+          >
+            Redirecting to Dashboard...
+          </Typography>
+          <Typography 
+            variant="body1" 
+            sx={{ opacity: 0.8, textAlign: 'center' }}
+          >
+            Please wait while we prepare your account
+          </Typography>
+        </Box>
+      </Backdrop>
+
+      <Fade in={isLoaded} timeout={600}>
+        <Container maxWidth="sm" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', py: 2 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 3,
+              width: '100%'
             }}
           >
+            {/* Header */}
             <Box 
               sx={{ 
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                bgcolor: 'rgba(255, 255, 255, 0.2)',
-                backdropFilter: 'blur(10px)',
-                borderRadius: '50%',
-                p: 3,
-                mb: 3,
-                border: '2px solid rgba(255, 255, 255, 0.3)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+                textAlign: 'center',
+                color: 'white',
+                mb: 2
               }}
             >
-              <Shield size={30} color="white" />
+              <Box 
+                sx={{ 
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  bgcolor: 'rgba(255, 255, 255, 0.2)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '50%',
+                  p: 3,
+                  mb: 3,
+                  border: '2px solid rgba(255, 255, 255, 0.3)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+                }}
+              >
+                <Shield size={30} color="white" />
+              </Box>
+              
+              <Typography 
+                variant="h4" 
+                fontWeight="bold" 
+                sx={{
+                  textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)'
+                }}
+              >
+                Face Recognition Login
+              </Typography>
+              
+              <Typography 
+                variant="h6"
+                sx={{ opacity: 0.6 }}
+              >
+                Secure authentication powered by AI
+              </Typography>
             </Box>
-            
-            <Typography 
-              variant="h4" 
-              fontWeight="bold" 
-              sx={{
-                textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)'
+
+            {/* Main Content Paper */}
+            <Paper 
+              elevation={24} 
+              sx={{ 
+                width: '100%',
+                borderRadius: 3,
+                overflow: 'hidden',
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(255, 255, 255, 0.3)'
               }}
             >
-              Face Recognition Login
-            </Typography>
-            
-            <Typography 
-              variant="h6"
-              sx={{ opacity: 0.6 }}
-            >
-              Secure authentication powered by AI
-            </Typography>
+              <Box sx={{ p: 4 }}>
+                {/* Camera Section */}
+                <Box sx={{ mb: 3 }}>
+                  <CameraView
+                    videoRef={videoRef}
+                    canvasRef={canvasRef}
+                    isCameraActive={isCameraActive}
+                  />
+                </Box>
+
+                {/* Status Display */}
+                <Box sx={{ mb: 3 }}>
+                  <StatusDisplay status={status} />
+                </Box>
+
+                {/* Control Buttons */}
+                <Stack spacing={2}>
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    size="large"
+                    onClick={startCamera}
+                    disabled={!isModelsLoaded || isCameraActive}
+                    startIcon={!isModelsLoaded ? <Loader2 className="animate-spin" size={20} /> : <Camera size={20} />}
+                    sx={{
+                      py: 1.5,
+                      fontSize: '1.1rem',
+                      fontWeight: 'medium',
+                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                      boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
+                      '&:hover': {
+                        boxShadow: '0 6px 20px rgba(102, 126, 234, 0.6)',
+                      },
+                      '&:disabled': {
+                        background: 'rgba(0, 0, 0, 0.12)',
+                      }
+                    }}
+                  >
+                    {!isModelsLoaded ? 'Loading AI Models...' : 'Activate Camera'}
+                  </Button>
+
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    size="large"
+                    onClick={captureFace}
+                    disabled={!isCameraActive}
+                    startIcon={<Scan size={20} />}
+                    sx={{
+                      py: 1.5,
+                      fontSize: '1.1rem',
+                      fontWeight: 'medium',
+                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                      boxShadow: '0 4px 15px rgba(16, 185, 129, 0.4)',
+                      '&:hover': {
+                        boxShadow: '0 6px 20px rgba(16, 185, 129, 0.6)',
+                      },
+                      '&:disabled': {
+                        background: 'rgba(0, 0, 0, 0.12)',
+                      }
+                    }}
+                  >
+                    Scan My Face
+                  </Button>
+                </Stack>
+              </Box>
+            </Paper>
           </Box>
-
-          {/* Main Content Paper */}
-          <Paper 
-            elevation={24} 
-            sx={{ 
-              width: '100%',
-              borderRadius: 3,
-              overflow: 'hidden',
-              background: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.3)'
-            }}
-          >
-            <Box sx={{ p: 4 }}>
-              {/* Camera Section */}
-              <Box sx={{ mb: 3 }}>
-                <CameraView
-                  videoRef={videoRef}
-                  canvasRef={canvasRef}
-                  isCameraActive={isCameraActive}
-                />
-              </Box>
-
-              {/* Status Display */}
-              <Box sx={{ mb: 3 }}>
-                <StatusDisplay status={status} />
-              </Box>
-
-              {/* Control Buttons */}
-              <Stack spacing={2}>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  size="large"
-                  onClick={startCamera}
-                  disabled={!isModelsLoaded || isCameraActive}
-                  startIcon={!isModelsLoaded ? <Loader2 className="animate-spin" size={20} /> : <Camera size={20} />}
-                  sx={{
-                    py: 1.5,
-                    fontSize: '1.1rem',
-                    fontWeight: 'medium',
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
-                    '&:hover': {
-                      boxShadow: '0 6px 20px rgba(102, 126, 234, 0.6)',
-                    },
-                    '&:disabled': {
-                      background: 'rgba(0, 0, 0, 0.12)',
-                    }
-                  }}
-                >
-                  {!isModelsLoaded ? 'Loading AI Models...' : 'Activate Camera'}
-                </Button>
-
-                <Button
-                  fullWidth
-                  variant="contained"
-                  size="large"
-                  onClick={captureFace}
-                  disabled={!isCameraActive}
-                  startIcon={<Scan size={20} />}
-                  sx={{
-                    py: 1.5,
-                    fontSize: '1.1rem',
-                    fontWeight: 'medium',
-                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    boxShadow: '0 4px 15px rgba(16, 185, 129, 0.4)',
-                    '&:hover': {
-                      boxShadow: '0 6px 20px rgba(16, 185, 129, 0.6)',
-                    },
-                    '&:disabled': {
-                      background: 'rgba(0, 0, 0, 0.12)',
-                    }
-                  }}
-                >
-                  Scan My Face
-                </Button>
-              </Stack>
-            </Box>
-          </Paper>
-        </Box>
-      </Container>
-    </Fade>
+        </Container>
+      </Fade>
+    </>
   )
 }
 
