@@ -1,4 +1,15 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+A modern, real-time face recognition authentication system that replaces traditional passwords with biometric security. Built with cutting-edge web technologies for seamless integration into any application.
+
+## ✨ Features
+
+- 🤖 **AI-Powered Recognition** - Advanced face detection and recognition using face-api.js
+- 🔒 **Secure Authentication** - No passwords needed, your face is your key
+- 📱 **Cross-Platform** - Works on desktop and mobile browsers
+- ⚡ **Real-Time Processing** - Instant face detection and verification
+- 🎨 **Modern UI** - Beautiful Material-UI components with glassmorphism design
+- 🔄 **User Registration** - Seamless onboarding for new users
+- 💾 **Local Storage** - Secure local data management
+- 🌐 **Progressive Web App** - Offline-ready functionality
 
 ## Getting Started
 
