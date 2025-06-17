@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Numans } from "next/font/google";
 import "./globals.css";
 import ClientLayout from "./components/ClientLayout";
 
@@ -12,6 +12,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const numans = Numans({
+  variable: "--font-numans",
+  subsets: ["latin"],
+  weight: "400", 
+});
+
 export const metadata = {
   title: "Face Recognition Login",
   description: "Secure authentication with AI-powered face recognition",
@@ -21,7 +27,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
-        <ClientLayout className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}>
+        <ClientLayout className={`${geistSans.variable} ${geistMono.variable} ${numans.variable} antialiased min-h-screen`}>
           {children}
         </ClientLayout>
       </body>
