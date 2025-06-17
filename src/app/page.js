@@ -49,26 +49,24 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-      <div className="w-full max-w-2xl">
-        {searchParams.get('registration') === 'success' && !isLoggedIn && (
-          <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-md text-green-700 text-center">
-            🎊 Registration successful! Logging you in...
-          </div>
-        )}
-        
-        {!isLoggedIn ? (
-          <AuthContainer 
-            onLogin={handleLogin} 
-            isModelsLoaded={isModelsLoaded}
-          />
-        ) : (
-          <Dashboard 
-            user={currentUser} 
-            onLogout={handleLogout} 
-          />
-        )}
-      </div>
-    </div>
+    <>
+      {searchParams.get('registration') === 'success' && !isLoggedIn && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 p-4 bg-green-50 border border-green-200 rounded-md text-green-700 text-center">
+          🎊 Registration successful! Logging you in...
+        </div>
+      )}
+      
+      {!isLoggedIn ? (
+        <AuthContainer 
+          onLogin={handleLogin} 
+          isModelsLoaded={isModelsLoaded}
+        />
+      ) : (
+        <Dashboard 
+          user={currentUser} 
+          onLogout={handleLogout} 
+        />
+      )}
+    </>
   )
 }

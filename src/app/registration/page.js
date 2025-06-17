@@ -107,7 +107,7 @@ export default function RegistrationPage() {
                   boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
                 }}
               >
-                <UserCheck size={40} color="white" />
+                <UserCheck size={30} color="white" />
               </Box>
               
               <Typography 
@@ -135,7 +135,7 @@ export default function RegistrationPage() {
                 <Typography variant="h6">
                   Your face has been captured successfully
                 </Typography>
-                <Camera size={20} />
+                <Sparkles size={20} />
               </Box>
             </Box>
 
