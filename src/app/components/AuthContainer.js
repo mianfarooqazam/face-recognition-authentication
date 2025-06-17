@@ -23,16 +23,55 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
   }, [isModelsLoaded])
 
   const startCamera = async () => {
+    // Check if we're in a browser environment
+    if (typeof window === 'undefined') {
+      setStatus({ 
+        message: '❌ Camera access is not available in this environment.', 
+        type: 'error' 
+      })
+      return
+    }
+
+    // Check if mediaDevices is available
+    if (!navigator.mediaDevices) {
+      // For older browsers that might not have mediaDevices directly on navigator
+      navigator.mediaDevices = {}
+    }
+
+    // Some browsers partially implement mediaDevices. We can't just assign an object
+    // with getUserMedia as it would overwrite existing properties.
+    if (!navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia = function(constraints) {
+        // First get ahold of the legacy getUserMedia, if present
+        const getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia
+
+        // Some browsers just don't implement it - return a rejected promise with an error
+        if (!getUserMedia) {
+          return Promise.reject(new Error('getUserMedia is not implemented in this browser'))
+        }
+
+        // Otherwise, wrap the call to the old navigator.getUserMedia with a Promise
+        return new Promise(function(resolve, reject) {
+          getUserMedia.call(navigator, constraints, resolve, reject)
+        })
+      }
+    }
+
     try {
       setStatus({ message: '📹 Initializing camera...', type: 'loading' })
       
-      const stream = await navigator.mediaDevices.getUserMedia({
+      // Check if we're on a mobile device
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+      
+      const constraints = {
         video: {
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
+          width: { ideal: isMobile ? 640 : 1280 },
+          height: { ideal: isMobile ? 480 : 720 },
           facingMode: 'user'
         }
-      })
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia(constraints)
 
       if (videoRef.current) {
         videoRef.current.srcObject = stream
@@ -42,7 +81,21 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
       }
     } catch (error) {
       console.error('Error accessing camera:', error)
-      setStatus({ message: '❌ Camera access denied. Please allow camera permissions and try again.', type: 'error' })
+      let errorMessage = '❌ Camera access denied. Please allow camera permissions and try again.'
+      
+      if (error.name === 'NotAllowedError') {
+        errorMessage = '❌ Camera access was denied. Please allow camera permissions in your browser settings.'
+      } else if (error.name === 'NotFoundError') {
+        errorMessage = '❌ No camera found. Please ensure you have a camera connected.'
+      } else if (error.name === 'NotReadableError') {
+        errorMessage = '❌ Camera is in use by another application. Please close other applications using the camera.'
+      } else if (error.name === 'OverconstrainedError') {
+        errorMessage = '❌ Camera constraints could not be satisfied. Please try again.'
+      } else if (error.name === 'TypeError') {
+        errorMessage = '❌ Camera access is not supported in this browser. Please try using Chrome, Firefox, or Safari.'
+      }
+      
+      setStatus({ message: errorMessage, type: 'error' })
     }
   }
 
