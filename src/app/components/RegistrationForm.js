@@ -1,4 +1,16 @@
 import { useState } from 'react'
+import { 
+  TextField, 
+  Button, 
+  Box, 
+  Paper, 
+  Typography, 
+  Alert,
+  CircularProgress,
+  Container,
+  InputAdornment
+} from '@mui/material'
+import { User, Mail, AlertCircle, CheckCircle } from 'lucide-react'
 import { checkUserExists } from '../utils/userStorage'
 
 const RegistrationForm = ({ onSubmit }) => {
@@ -81,76 +93,96 @@ const RegistrationForm = ({ onSubmit }) => {
   }
 
   return (
-    <div className="mt-6">
-      <div className="bg-white rounded-lg p-6 border border-gray-200">
-        <div className="text-center mb-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Complete Your Profile</h2>
-          <p className="text-gray-600">Just a few details to get you started</p>
-        </div>
+    <Container maxWidth="sm">
+      <Paper elevation={3} sx={{ p: 4, mt: 4 }}>
+        <Box textAlign="center" mb={3}>
+          <Typography variant="h5" component="h2" fontWeight="bold" gutterBottom>
+            Complete Your Profile
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Just a few details to get you started
+          </Typography>
+        </Box>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
-              Choose a Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
-              onChange={handleInputChange}
-              required
-              className={`w-full px-3 py-2 border rounded-md ${errors.username ? 'border-red-500' : 'border-gray-300'}`}
-              placeholder="Enter your username"
-              disabled={isSubmitting}
-            />
-            {errors.username && (
-              <p className="mt-1 text-sm text-red-600">
-                {errors.username}
-              </p>
-            )}
-          </div>
+        <Box component="form" onSubmit={handleSubmit} noValidate>
+          <TextField
+            fullWidth
+            id="username"
+            name="username"
+            label="Choose a Username"
+            variant="outlined"
+            margin="normal"
+            value={formData.username}
+            onChange={handleInputChange}
+            error={!!errors.username}
+            helperText={errors.username}
+            disabled={isSubmitting}
+            required
+            placeholder="Enter your username"
+            autoFocus
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <User size={20} />
+                </InputAdornment>
+              ),
+            }}
+          />
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              required
-              className={`w-full px-3 py-2 border rounded-md ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
-              placeholder="Enter your email"
-              disabled={isSubmitting}
-            />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-600">
-                {errors.email}
-              </p>
-            )}
-          </div>
+          <TextField
+            fullWidth
+            id="email"
+            name="email"
+            label="Email Address"
+            type="email"
+            variant="outlined"
+            margin="normal"
+            value={formData.email}
+            onChange={handleInputChange}
+            error={!!errors.email}
+            helperText={errors.email}
+            disabled={isSubmitting}
+            required
+            placeholder="Enter your email"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Mail size={20} />
+                </InputAdornment>
+              ),
+            }}
+          />
 
           {errors.submit && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-sm text-red-600">
-                {errors.submit}
-              </p>
-            </div>
+            <Alert 
+              severity="error" 
+              sx={{ mt: 2 }}
+              icon={<AlertCircle size={20} />}
+            >
+              {errors.submit}
+            </Alert>
           )}
 
-          <button
+          <Button
             type="submit"
+            fullWidth
+            variant="contained"
+            size="large"
             disabled={isSubmitting}
-            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+            startIcon={isSubmitting ? <CircularProgress size={20} color="inherit" /> : <CheckCircle size={20} />}
+            sx={{ 
+              mt: 3, 
+              mb: 2,
+              py: 1.5,
+              fontSize: '1rem',
+              fontWeight: 'medium'
+            }}
           >
             {isSubmitting ? 'Creating your account...' : 'Complete Registration'}
-          </button>
-        </form>
-      </div>
-    </div>
+          </Button>
+        </Box>
+      </Paper>
+    </Container>
   )
 }
 

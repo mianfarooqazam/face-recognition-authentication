@@ -1,17 +1,16 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import CameraView from './CameraView'
-import RegistrationForm from './RegistrationForm'
 import StatusDisplay from './StatusDisplay'
 import { detectFaceInVideo, captureFaceDescriptor } from '../utils/faceApi'
-import { findMatchingUser, saveUser } from '../utils/userStorage'
+import { findMatchingUser } from '../utils/userStorage'
 
 const AuthContainer = ({ onLogin, isModelsLoaded }) => {
+  const router = useRouter()
   const [status, setStatus] = useState({ message: 'Loading face detection models...', type: 'loading' })
   const [isCameraActive, setIsCameraActive] = useState(false)
-  const [showRegistration, setShowRegistration] = useState(false)
-  const [capturedDescriptor, setCapturedDescriptor] = useState(null)
   const videoRef = useRef(null)
   const canvasRef = useRef(null)
   const streamRef = useRef(null)
@@ -137,38 +136,29 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
       if (existingUser) {
         existingUser.lastLogin = new Date().toISOString()
         setStatus({ message: `🎉 Welcome back, ${existingUser.username}!`, type: 'success' })
+        
+        // Stop camera before logging in
+        stopCamera()
+        
         setTimeout(() => {
           onLogin(existingUser)
-          stopCamera()
         }, 2000)
       } else {
-        setCapturedDescriptor(faceDescriptor)
-        setShowRegistration(true)
-        setStatus({ message: '👋 New face detected! Please complete your registration below.', type: 'success' })
+        // Store face descriptor temporarily
+        sessionStorage.setItem('pendingFaceDescriptor', JSON.stringify(Array.from(faceDescriptor)))
+        
+        setStatus({ message: '👋 New face detected! Redirecting to registration...', type: 'success' })
+        
+        // Stop camera and redirect to registration
+        setTimeout(() => {
+          stopCamera()
+          router.push('/registration')
+        }, 1500)
       }
     } catch (error) {
       console.error('Error capturing face:', error)
       setStatus({ message: '❌ Face analysis failed. Please ensure good lighting and try again.', type: 'error' })
     }
-  }
-
-  const handleRegistration = (userData) => {
-    const newUser = {
-      id: Date.now().toString(),
-      username: userData.username,
-      email: userData.email,
-      faceDescriptor: Array.from(capturedDescriptor),
-      registrationDate: new Date().toISOString(),
-      lastLogin: new Date().toISOString()
-    }
-
-    saveUser(newUser)
-    setStatus({ message: `🎊 Welcome aboard, ${newUser.username}! Your face has been registered.`, type: 'success' })
-    
-    setTimeout(() => {
-      onLogin(newUser)
-      stopCamera()
-    }, 2000)
   }
 
   useEffect(() => {
@@ -188,6 +178,13 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
       }
     }
   }, [isCameraActive])
+
+  // Cleanup camera on unmount
+  useEffect(() => {
+    return () => {
+      stopCamera()
+    }
+  }, [])
 
   return (
     <div className="bg-white rounded-lg p-8 shadow-md">
@@ -229,11 +226,6 @@ const AuthContainer = ({ onLogin, isModelsLoaded }) => {
           Scan My Face
         </button>
       </div>
-
-      {/* Registration Form */}
-      {showRegistration && (
-        <RegistrationForm onSubmit={handleRegistration} />
-      )}
     </div>
   )
 }
