@@ -1,3 +1,6 @@
+🔐 Face Recognition Authentication System
+ > **Secure, passwordless authentication powered by AI face recognition technology**
+
 A modern, real-time face recognition authentication system that replaces traditional passwords with biometric security. Built with cutting-edge web technologies for seamless integration into any application.
 
 ## ✨ Features
